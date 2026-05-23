@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1>📊 {{ campaign.name }}</h1>
+    <p class="text-muted mb-0">
+      Template: {{ campaign.template.name }} &nbsp;|&nbsp;
+      Status: <strong>{{ campaign.status }}</strong> &nbsp;|&nbsp;
+      Created: {{ campaign.created_at.strftime('%Y-%m-%d %H:%M') }}
+    </p>
+  </div>
+  <a href="/campaigns/{{ campaign.id }}/report/download"
+     class="btn btn-danger btn-lg px-4">⬇ Download PDF</a>
+</div>
+
+<div class="row mb-4 g-3">
+  <div class="col"><div class="card text-center border-primary p-3">
+    <h2 class="text-primary mb-0">{{ sent_c }}</h2><small>Emails Sent</small></div></div>
+  <div class="col"><div class="card text-center border-warning p-3">
+    <h2 class="text-warning mb-0">{{ clicked_c }}</h2><small>Clicked</small></div></div>
+  <div class="col"><div class="card text-center border-success p-3">
+    <h2 class="text-success mb-0">{{ safe_c }}</h2><small>Did Not Click</small></div></div>
+  <div class="col"><div class="card text-center border-purple p-3">
+    <h2 class="mb-0" style="color:#6f42c1">{{ trained_c }}</h2><small>Trained</small></div></div>
+  <div class="col"><div class="card text-center border-danger p-3">
+    <h2 class="text-danger mb-0">{{ click_rate }}%</h2><small>Click Rate</small></div></div>
+</div>
+
+<h5 class="mt-4">👆 Who Clicked the Link</h5>
+<table class="table table-hover table-sm">
+  <thead class="table-dark">
+    <tr><th>#</th><th>Email</th><th>Clicked</th><th>Training Done</th></tr>
+  </thead>
+  <tbody>
+  {% for r in summary if r.clicked %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ r.email }}</td>
+      <td><span class="badge bg-warning text-dark">✓ Yes</span></td>
+      <td>
+        {% if r.trained %}
+          <span class="badge bg-success">✓ Trained</span>
+        {% else %}
+          <span class="badge bg-danger">✗ Not Yet</span>
+        {% endif %}
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="4" class="text-success text-center">
+      No one clicked the link — excellent!
+    </td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h5 class="mt-4">✅ Who Did Not Click</h5>
+<table class="table table-hover table-sm">
+  <thead class="table-success">
+    <tr><th>#</th><th>Email</th><th>Status</th></tr>
+  </thead>
+  <tbody>
+  {% for r in summary if not r.clicked and r.email_sent %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ r.email }}</td>
+      <td><span class="badge bg-success">✓ Resisted Phishing</span></td>
+    </tr>
+  {% else %}
+    <tr><td colspan="3" class="text-center text-muted">—</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<a href="/campaigns/{{ campaign.id }}" class="btn btn-secondary mt-3">← Back</a>
+{% endblock %}

@@ -1,0 +1,11 @@
+flask
+flask-sqlalchemy
+flask-login
+flask-mail
+bcrypt
+python-docx
+reportlab
+matplotlib
+python-dotenv
+gunicorn
+pandas

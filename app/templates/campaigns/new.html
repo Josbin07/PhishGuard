@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>New Campaign</h1>
+<form method="POST" enctype="multipart/form-data" style="max-width:520px">
+  <div class="mb-3">
+    <label class="form-label">Campaign Name</label>
+    <input type="text" name="name" class="form-control"
+           placeholder="e.g. Q3 Awareness Test" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Phishing Template</label>
+    <select name="template_id" class="form-select" required>
+      {% for t in templates %}
+        <option value="{{ t.id }}">{{ t.name }} ({{ t.difficulty }})</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Upload Email List <small class="text-muted">(.docx — one email per line)</small></label>
+    <input type="file" name="emails_docx" class="form-control" accept=".docx" required
+           id="emailFile">
+    <div class="form-text text-danger">
+      ⚠️ A .docx email list is required to create a campaign.
+    </div>
+  </div>
+  <button type="submit" class="btn btn-warning">Create Campaign & Get URL</button>
+</form>
+
+<script>
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const fileInput = document.getElementById('emailFile');
+    if (!fileInput.files || fileInput.files.length === 0) {
+      e.preventDefault();
+      alert('Please upload a .docx email list to continue.');
+      fileInput.focus();
+      return;
+    }
+    const fileName = fileInput.files[0].name;
+    if (!fileName.endsWith('.docx')) {
+      e.preventDefault();
+      alert('Only .docx files are accepted.');
+      fileInput.value = '';
+      fileInput.focus();
+    }
+  });
+</script>
+{% endblock %}

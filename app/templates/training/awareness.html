@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Security Awareness — PhishGuard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light d-flex align-items-center justify-content-center" style="min-height:100vh">
+<div class="card shadow p-5" style="max-width:680px;width:100%">
+
+  <div class="text-center">
+    <div style="font-size:4rem">⚠️</div>
+    <h2 class="text-danger mt-2">This was a Phishing Simulation</h2>
+    <p class="text-muted">You clicked a simulated phishing link. In a real attack, your
+    credentials or device could have been compromised.</p>
+  </div>
+
+  <hr>
+
+  <h5>🛡️ How to spot phishing</h5>
+  <ul>
+    <li>Check the sender's email address carefully — look for typos or lookalike domains</li>
+    <li>Hover over links <strong>before</strong> clicking to preview the real URL</li>
+    <li>Urgent or threatening language ("Act now!", "Your account will be suspended") is a red flag</li>
+    <li>Legitimate services never ask for your password via email</li>
+    <li>When in doubt, go directly to the website — never click the link</li>
+    <li>Unexpected attachments — even from known senders — can contain malware</li>
+  </ul>
+
+  <hr>
+
+  <h5>🔬 Verify suspicious URLs or files with VirusTotal</h5>
+  <p>Before clicking any suspicious link or opening any file, you can check it
+  for malware and phishing indicators using VirusTotal — a free tool that scans
+  using 70+ antivirus engines.</p>
+
+  <div class="row g-3 mb-3">
+    <div class="col-md-6">
+      <div class="card border-primary h-100">
+        <div class="card-body">
+          <h6 class="card-title text-primary">🔗 Check a URL</h6>
+          <ol class="mb-2">
+            <li>Copy the suspicious link (right-click → Copy link address)</li>
+            <li>Go to <strong>virustotal.com</strong></li>
+            <li>Click the <strong>URL</strong> tab</li>
+            <li>Paste the URL and press Enter</li>
+            <li>If any engine flags it — <strong>do not visit it</strong></li>
+          </ol>
+          <a href="https://www.virustotal.com/gui/home/url"
+             target="_blank" class="btn btn-sm btn-primary w-100">
+            Open VirusTotal URL Scanner →
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card border-warning h-100">
+        <div class="card-body">
+          <h6 class="card-title text-warning">📎 Check a File</h6>
+          <ol class="mb-2">
+            <li>Do <strong>not</strong> open the file yet</li>
+            <li>Go to <strong>virustotal.com</strong></li>
+            <li>Click the <strong>File</strong> tab</li>
+            <li>Upload the suspicious file</li>
+            <li>If any engine flags it — <strong>delete it immediately</strong></li>
+          </ol>
+          <a href="https://www.virustotal.com/gui/home/upload"
+             target="_blank" class="btn btn-sm btn-warning w-100">
+            Open VirusTotal File Scanner →
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-secondary mb-3">
+    <div class="card-body">
+      <h6 class="card-title">📧 Check an Email Sender</h6>
+      <p class="mb-2 text-muted">You can also paste a suspicious email address or domain
+      into VirusTotal's search to see if it has been reported for phishing or spam.</p>
+      <a href="https://www.virustotal.com/gui/home/search"
+         target="_blank" class="btn btn-sm btn-outline-secondary">
+        Open VirusTotal Search →
+      </a>
+    </div>
+  </div>
+
+  <hr>
+
+  <h5>🚨 What to do if you clicked a real phishing link</h5>
+  <ul>
+    <li>Disconnect from the internet immediately</li>
+    <li>Change your password for the targeted service from a <strong>different device</strong></li>
+    <li>Enable two-factor authentication (2FA) if not already on</li>
+    <li>Report it to your IT/security team right away</li>
+    <li>Run a malware scan on your device</li>
+  </ul>
+
+  <div class="alert alert-success text-center mt-3 mb-0">
+    ✅ You are now better prepared. Stay vigilant and always verify before you click! 🛡️
+  </div>
+
+</div>
+</body>
+</html>

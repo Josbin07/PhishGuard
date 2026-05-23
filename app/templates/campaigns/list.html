@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Campaigns</h1>
+  <a href="/campaigns/new" class="btn btn-warning">+ New Campaign</a>
+</div>
+{% if campaigns %}
+<table class="table table-hover">
+  <thead class="table-dark">
+    <tr><th>Name</th><th>Template</th><th>Status</th><th>Created</th><th></th></tr>
+  </thead>
+  <tbody>
+  {% for c in campaigns %}
+    <tr>
+      <td>{{ c.name }}</td>
+      <td>{{ c.template.name }}</td>
+      <td><span class="badge bg-{{ 'success' if c.status == 'active' else 'secondary' }}">{{ c.status }}</span></td>
+      <td>{{ c.created_at.strftime('%Y-%m-%d') }}</td>
+      <td><a href="/campaigns/{{ c.id }}" class="btn btn-sm btn-outline-primary">View</a></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="alert alert-secondary">No campaigns yet. Create one above.</div>
+{% endif %}
+{% endblock %}

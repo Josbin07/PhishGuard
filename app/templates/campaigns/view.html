@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ campaign.name }}</h1>
+<p>Status: <strong>{{ campaign.status }}</strong> |
+   Template: {{ campaign.template.name }} |
+   Created: {{ campaign.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+
+{# ── Action Buttons ───────────────────────────────────────── #}
+<div class="mb-4 d-flex flex-wrap gap-2">
+  <a href="/campaigns/{{ campaign.id }}/report" class="btn btn-success">
+    📊 View / Download Report
+  </a>
+
+  {% if campaign.targets | selectattr('email', 'ne', 'test@simulation.local') | list %}
+  <form method="POST" action="/campaigns/{{ campaign.id }}/send"
+        onsubmit="return confirm('Resend simulation emails to all targets?')">
+    <button class="btn btn-danger">📧 Resend Emails</button>
+  </form>
+  {% endif %}
+
+  {% if campaign.status == 'active' %}
+    <form method="POST" action="/campaigns/{{ campaign.id }}/pause">
+      <button class="btn btn-warning">⏸ Pause</button>
+    </form>
+  {% else %}
+    <form method="POST" action="/campaigns/{{ campaign.id }}/resume">
+      <button class="btn btn-success">▶ Resume</button>
+    </form>
+  {% endif %}
+
+  <form method="POST" action="/campaigns/{{ campaign.id }}/delete"
+        onsubmit="return confirm('Delete this campaign?')">
+    <button class="btn btn-outline-danger">🗑 Delete</button>
+  </form>
+</div>
+
+{# ── Tracking URLs ────────────────────────────────────────── #}
+<h4>Tracking URLs</h4>
+<table class="table table-bordered mb-4">
+  <thead class="table-dark">
+    <tr><th>Email</th><th>Tracking URL</th><th>Events</th></tr>
+  </thead>
+  <tbody>
+  {% for t in target_urls %}
+    <tr>
+      <td>{{ t.email }}</td>
+      <td>
+        <div class="input-group input-group-sm">
+          <input type="text" class="form-control font-monospace"
+                 value="{{ t.url }}" readonly>
+          <button class="btn btn-outline-warning btn-sm"
+                  onclick="navigator.clipboard.writeText('{{ t.url }}');this.innerText='✓'">
+            Copy
+          </button>
+        </div>
+      </td>
+      <td>{{ t.events | length }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{# ── Analytics Summary ────────────────────────────────────── #}
+{% set all_events = namespace(items=[]) %}
+{% for t in campaign.targets %}
+  {% for e in t.events %}
+    {% set all_events.items = all_events.items + [e] %}
+  {% endfor %}
+{% endfor %}
+
+{% set clicks  = all_events.items | selectattr('event_type','equalto','link_clicked')          | list %}
+{% set submits = all_events.items | selectattr('event_type','equalto','credentials_submitted') | list %}
+{% set sent    = all_events.items | selectattr('event_type','equalto','email_sent')            | list %}
+
+<div class="row mb-4">
+  <div class="col-md-3">
+    <div class="card text-center border-info">
+      <div class="card-body"><h2 class="text-info">{{ sent|length }}</h2><p>Emails Sent</p></div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center border-warning">
+      <div class="card-body"><h2 class="text-warning">{{ clicks|length }}</h2><p>Link Clicks</p></div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center border-danger">
+      <div class="card-body"><h2 class="text-danger">{{ submits|length }}</h2><p>Form Submits</p></div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center border-secondary">
+      <div class="card-body"><h2>{{ all_events.items|length }}</h2><p>Total Events</p></div>
+    </div>
+  </div>
+</div>
+
+{# ── Event Log ────────────────────────────────────────────── #}
+<h4>Event Log</h4>
+{% if all_events.items %}
+<table class="table table-striped">
+  <thead class="table-dark">
+    <tr><th>#</th><th>Email</th><th>Event</th><th>Time</th><th>IP</th><th>Browser</th></tr>
+  </thead>
+  <tbody>
+  {% for e in all_events.items | sort(attribute='timestamp', reverse=True) %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td><small>{{ e.target.email if e.target else '—' }}</small></td>
+      <td>
+        {% if e.event_type == 'email_sent' %}<span class="badge bg-info">📧 Sent</span>
+        {% elif e.event_type == 'link_clicked' %}<span class="badge bg-warning text-dark">🖱 Clicked</span>
+        {% elif e.event_type == 'credentials_submitted' %}<span class="badge bg-danger">⚠ Submitted</span>
+        {% elif e.event_type == 'training_shown' %}<span class="badge bg-success">✅ Training</span>
+        {% else %}<span class="badge bg-secondary">{{ e.event_type }}</span>{% endif %}
+      </td>
+      <td>{{ e.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+      <td><code>{{ e.ip_address or '—' }}</code></td>
+      <td><small class="text-muted">{{ e.user_agent[:80] if e.user_agent else '—' }}</small></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="alert alert-secondary">No events yet.</div>
+{% endif %}
+
+{% endblock %}
