@@ -1,4 +1,4 @@
-# 🎧 PhishGuard# 🎧 PhishGuard
+#🎧 PhishGuard
 ### Web-Based Phishing Simulation & Security Awareness Platform
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue)
